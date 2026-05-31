@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: upvfab-design-tools
+Version: 0.1.0
+Summary: Library for UPV PIC coupler and EME design workflows.
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: gdsfactory==9.34.0
+Requires-Dist: gplugins[femwell,tidy3d]==2.0.1
+Requires-Dist: ipykernel>=6.29
+Requires-Dist: matplotlib>=3.8
+Requires-Dist: numpy>=1.26
+Requires-Dist: shapely>=2.0
+Requires-Dist: pytz
+Requires-Dist: tqdm>=4.66
+
+# TFM topic 11
+
+

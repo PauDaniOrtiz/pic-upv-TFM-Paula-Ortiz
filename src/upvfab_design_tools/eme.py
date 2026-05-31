@@ -220,6 +220,22 @@ class MMI_EME:
             slices=self.slices,
         )
 
+    def propagate_all_entrys(self):
+        #ovl_input = np.zeros(self.n_MODES, dtype=np.complex128)
+
+        #for i in range(self.n_IN):
+        #    ovl_input += self.power_IN_config[i] * self.ovl_IN[i]
+        
+        ovl_input = np.sum(self.ovl_IN, axis=0)
+        self.z, self.intensity_z, self.propag = propagate_modes(
+            wvl=self.wvl,
+            dz=self.dz,
+            L=self.L_MMI + self.dL_MMI,
+            ovl_z_0=ovl_input,
+            modes=self.MMI_modes_pol,
+            slices=self.slices,
+        )
+
     def output_transfer(self):
         self.field_OUT = np.zeros((self.n_OUT), dtype=np.complex128)
         self.power_OUT = np.zeros((self.n_OUT))
@@ -231,9 +247,14 @@ class MMI_EME:
             self.power_OUT[i] = np.abs(o) ** 2
             self.phase_OUT[i] = (180 / np.pi) * np.angle(o)
 
-        self.power_IN = np.sum(np.abs(self.ovl_IN[0]) ** 2)
+        
+        total_field_in = np.sum(self.ovl_IN, axis=0)
+        self.power_IN = np.sum(np.abs(total_field_in) ** 2)
+        
+        #self.power_IN = np.sum(np.abs(self.ovl_IN[0]) ** 2)
         self.tot_power_OUT = np.sum(self.power_OUT)
-        self.EL = 10 * np.log10(1.0 / self.tot_power_OUT)
+        #self.EL = 10 * np.log10(1.0 / self.tot_power_OUT)
+        self.EL = 10 * np.log10(self.power_IN / self.tot_power_OUT)
         self.ratio_OUT = self.power_OUT / self.tot_power_OUT
 
         print("------- Pameters -------")
@@ -248,6 +269,8 @@ class MMI_EME:
         print("------------------------")
         print("Power over OUTs: ", [f"{num:.4f}" for num in self.power_OUT])
         print("Ratio over OUTs", [f"{num:.4f}" for num in self.ratio_OUT])
+        print("Phase over OUTs", [f"{num:.4f}" for num in self.phase_OUT])
+        return self.phase_OUT
 
     def plot_propagation(self, AspectRatioOne=True):
         fig, ax = plt.subplots()
@@ -372,6 +395,7 @@ class MMI_EME:
 
     def overlap_integral(self, s1, s2, x):
         return np.trapezoid(s1 * s2, x)
+        #return np.trapezoid(np.conj(s1) * s2, x)
 
     def IO_overlap_1D(self):
         self.normalize_MMI_slices_1D()
@@ -444,6 +468,15 @@ class MMI_EME:
     def propagation(self):
         self.IO_overlap_1D()
         self.propagate()
+        phase=self.output_transfer()
+        self.plot_propagation()
+
+        return phase
+
+    
+    def propagation_all(self):
+        self.IO_overlap_1D()
+        self.propagate_all_entrys()
         self.output_transfer()
         self.plot_propagation()
 
