@@ -220,7 +220,7 @@ class MMI_EME:
             slices=self.slices,
         )
 
-    def propagate_all_entrys(self):
+    def propagate_all_inputs(self):
         #ovl_input = np.zeros(self.n_MODES, dtype=np.complex128)
 
         #for i in range(self.n_IN):
@@ -248,7 +248,7 @@ class MMI_EME:
             self.phase_OUT[i] = (180 / np.pi) * np.angle(o)
 
         
-        total_field_in = np.sum(self.ovl_IN, axis=0)
+        total_field_in = self.ovl_IN[0]
         self.power_IN = np.sum(np.abs(total_field_in) ** 2)
         
         #self.power_IN = np.sum(np.abs(self.ovl_IN[0]) ** 2)
@@ -270,7 +270,7 @@ class MMI_EME:
         print("Power over OUTs: ", [f"{num:.4f}" for num in self.power_OUT])
         print("Ratio over OUTs", [f"{num:.4f}" for num in self.ratio_OUT])
         print("Phase over OUTs", [f"{num:.4f}" for num in self.phase_OUT])
-        return self.phase_OUT
+        return self.power_OUT,self.tot_power_OUT,self.power_IN,self.phase_OUT
 
     def plot_propagation(self, AspectRatioOne=True):
         fig, ax = plt.subplots()
@@ -468,15 +468,15 @@ class MMI_EME:
     def propagation(self):
         self.IO_overlap_1D()
         self.propagate()
-        phase=self.output_transfer()
+        power_ar, power_tot,power_in, phase = self.output_transfer()
         self.plot_propagation()
 
-        return phase
+        return power_ar, power_tot, power_in,phase
 
     
     def propagation_all(self):
         self.IO_overlap_1D()
-        self.propagate_all_entrys()
+        self.propagate_all_inputs()
         self.output_transfer()
         self.plot_propagation()
 
