@@ -469,7 +469,8 @@ class MMI_EME:
         self.IO_overlap_1D()
         self.propagate()
         power_ar, power_tot,power_in, phase = self.output_transfer()
-        self.plot_propagation()
+        
+        #self.plot_propagation()
 
         return power_ar, power_tot, power_in,phase
 
