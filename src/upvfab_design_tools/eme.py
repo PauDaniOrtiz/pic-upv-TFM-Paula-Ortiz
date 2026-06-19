@@ -33,6 +33,8 @@ class MMI_EME:
         VERBOSE=False,
         ENABLE_MODE_PLOTS=False,
         ENABLE_MMI_PLOTS=False,
+        Show_Propagation_Plot=False,
+        VERBOSE_ratios=False,
     ):
         self.name = name
         self.dim = dim
@@ -56,6 +58,8 @@ class MMI_EME:
         self.dx_IO = 0.0
 
         self.VERBOSE = VERBOSE
+        self.Show_Propagation_Plot = Show_Propagation_Plot
+        self.VERBOSE_ratios = VERBOSE_ratios
         self.ENABLE_MODE_PLOTS = ENABLE_MODE_PLOTS
         self.ENABLE_MMI_PLOTS = ENABLE_MMI_PLOTS
 
@@ -257,19 +261,21 @@ class MMI_EME:
         self.EL = 10 * np.log10(self.power_IN / self.tot_power_OUT)
         self.ratio_OUT = self.power_OUT / self.tot_power_OUT
 
-        print("------- Pameters -------")
-        print("MMI length", f"{self.L_MMI:.4f}")
-        print("MMI length increment", f"{self.dL_MMI:.4f}")
-        print("IO wg width", f"{self.wg_width:.4f}")
-        print("IO wg width increment", f"{self.wg_width_dw:.4f}")
-        print("------------------------")
-        print("Total power IN coupled", f"{self.power_IN:.4f}")
-        print("Total OUT power:", f"{self.tot_power_OUT:.4f}")
-        print("Excess loss [dB] = ", f"{self.EL:.4f}")
-        print("------------------------")
-        print("Power over OUTs: ", [f"{num:.4f}" for num in self.power_OUT])
-        print("Ratio over OUTs", [f"{num:.4f}" for num in self.ratio_OUT])
-        print("Phase over OUTs", [f"{num:.4f}" for num in self.phase_OUT])
+        if self.VERBOSE_ratios:
+
+            print("------- Pameters -------")
+            print("MMI length", f"{self.L_MMI:.4f}")
+            print("MMI length increment", f"{self.dL_MMI:.4f}")
+            print("IO wg width", f"{self.wg_width:.4f}")
+            print("IO wg width increment", f"{self.wg_width_dw:.4f}")
+            print("------------------------")
+            print("Total power IN coupled", f"{self.power_IN:.4f}")
+            print("Total OUT power:", f"{self.tot_power_OUT:.4f}")
+            print("Excess loss [dB] = ", f"{self.EL:.4f}")
+            print("------------------------")
+            print("Power over OUTs: ", [f"{num:.4f}" for num in self.power_OUT])
+            print("Ratio over OUTs", [f"{num:.4f}" for num in self.ratio_OUT])
+            print("Phase over OUTs", [f"{num:.4f}" for num in self.phase_OUT])
         return self.power_OUT,self.tot_power_OUT,self.power_IN,self.phase_OUT
 
     def plot_propagation(self, AspectRatioOne=True):
@@ -469,8 +475,8 @@ class MMI_EME:
         self.IO_overlap_1D()
         self.propagate()
         power_ar, power_tot,power_in, phase = self.output_transfer()
-        
-        #self.plot_propagation()
+        if self.Show_Propagation_Plot:
+            self.plot_propagation()
 
         return power_ar, power_tot, power_in,phase
 
