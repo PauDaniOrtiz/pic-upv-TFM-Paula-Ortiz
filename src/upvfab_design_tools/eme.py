@@ -225,12 +225,9 @@ class MMI_EME:
         )
 
     def propagate_all_inputs(self):
-        #ovl_input = np.zeros(self.n_MODES, dtype=np.complex128)
+        ovl_input = np.zeros(self.n_MODES, dtype=np.complex128)
 
-        #for i in range(self.n_IN):
-        #    ovl_input += self.power_IN_config[i] * self.ovl_IN[i]
-        
-        ovl_input = np.sum(self.ovl_IN, axis=0)
+        #ovl_input = np.sum(self.ovl_IN, axis=0)
         self.z, self.intensity_z, self.propag = propagate_modes(
             wvl=self.wvl,
             dz=self.dz,
@@ -297,6 +294,8 @@ class MMI_EME:
             )
         )
 
+        # si se quiere un tepper tocaría dibujarlo aqui.
+        
         for x_c_i in self.IN_WVG_positions:
             ax.add_patch(
                 Rectangle(
